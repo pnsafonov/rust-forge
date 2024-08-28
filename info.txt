@@ -2,3 +2,6 @@
 # log
 cargo add log
 cargo add env_logger
+
+# libc
+cargo add libc
