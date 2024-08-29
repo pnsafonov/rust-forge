@@ -17,6 +17,7 @@ fn do_main() {
     let l0 = args.len();
     let mut days0 = DEF_DAYS.to_string();
     let mut mins0 = String::from("0");
+    let mut verbose0 = false;
     for (i, arg) in args.iter().enumerate() {
         match arg.as_str() {
             "-d"|"--days" => {
@@ -34,6 +35,9 @@ fn do_main() {
             "-h"|"--help" => {
                 print_help();
                 exit(0);
+            }
+            "--verbose" => {
+                verbose0 = true;
             }
             "-v"|"--version" => {
                 print_version();
@@ -62,6 +66,7 @@ fn do_main() {
     let ctx = Context {
         days: days1,
         mins: mins1,
+        verbose: verbose0,
     };
     ctx.init();
 
@@ -76,10 +81,10 @@ inact checks last logins and do shutdown if no recent logins
 
     -d, --days <days>     days count before current day to check for logins, default 7
     -m, --mins <mins>     mins count before current time to check for logins
+        --verbose         print information about last logins
 
     -h, --help            display this help and exit
-    -v, --version         output version information and exit`
-    ");
+    -v, --version         output version information and exit`");
 }
 
 fn print_version() {
@@ -89,12 +94,14 @@ fn print_version() {
 struct Context {
     days: i32,
     mins: i32,
+    verbose: bool,
 }
 
 impl Context {
     fn init(&self) {
         info!("days = {}", self.days);
         info!("mins = {}", self.mins);
+        info!("verbose = {}", self.verbose);
     }
 }
 
@@ -114,12 +121,18 @@ fn do_job(ctx: &Context) {
             before = now - (60 * 60 * 24 * ctx.days);
         }
 
+        let mut i = 0;
         loop {
             let utp = getutxent();
             if utp.is_null() {
                 break;
             }
             let utp0 = *utp;
+
+            if ctx.verbose {
+                print_utmpx(&utp0, i);
+            }
+            i += 1;
 
             if utp0.ut_type != USER_PROCESS {
                 continue
@@ -160,6 +173,21 @@ fn do_job(ctx: &Context) {
     };
 
     exit(0);
+}
+
+unsafe fn print_utmpx(utp0: &libc::utmpx, i: i32) {
+    let s0= std::ffi::CStr::from_ptr(utp0.ut_id.as_ptr());
+    let s1 = std::ffi::CStr::from_ptr(utp0.ut_user.as_ptr());
+    let s2 = std::ffi::CStr::from_ptr(utp0.ut_line.as_ptr());
+    info!("i = {}, ut_type = {}, tv_sec = {}, ut_id = {:?}, ut_pid = {}, ut_user = {:?}, ut_line = {:?}",
+        i,
+        utp0.ut_type,
+        utp0.ut_tv.tv_sec,
+        s0,
+        utp0.ut_pid,
+        s1,
+        s2,
+    );
 }
 
 fn set_env_path() {
