@@ -149,6 +149,7 @@ fn do_job(ctx: &Context) {
     };
 
     info!("do_job, do shutdown");
+    set_env_path();
     _ = match process::Command::new("shutdown")
         .args(args0).spawn() {
         Ok(mut x) => x.wait(),
@@ -159,4 +160,20 @@ fn do_job(ctx: &Context) {
     };
 
     exit(0);
+}
+
+fn set_env_path() {
+    let mut val0: String = String::from("");
+    let key = "PATH";
+    match env::var(key) {
+        Ok(val) => val0 = val,
+        Err(_) => (),
+    };
+
+    if val0 != "" && !val0.ends_with(":") {
+        val0 += ":";
+    }
+
+    val0 += "/sbin:/bin:/usr/sbin:/usr/bin:/usr/local/sbin:/usr/local/bin:/root/bin";
+    env::set_var(key, val0);
 }
