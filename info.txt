@@ -1,4 +1,16 @@
 
+rustup target --help
+rustup target list
+rustup show
+
+x86_64-unknown-linux-gnu
+x86_64-unknown-freebsd
+rustup target add x86_64-unknown-linux-gnu
+rustup target add x86_64-unknown-freebsd
+
+cargo build --package inact --target x86_64-unknown-linux-gnu
+cargo build --package inact --target x86_64-unknown-freebsd
+
 # log
 cargo add log
 cargo add env_logger

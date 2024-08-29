@@ -102,7 +102,8 @@ fn do_job(ctx: &Context) {
             if utp0.ut_type != USER_PROCESS {
                 continue
             }
-            if utp0.ut_tv.tv_sec < before {
+            let utp_time = utp0.ut_tv.tv_sec as i32; // for freebsd
+            if utp_time < before {
                 continue
             }
 
