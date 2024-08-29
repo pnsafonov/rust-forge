@@ -1,6 +1,7 @@
 use std::env;
 use std::process;
-use log::{info,error};
+use std::process::exit;
+use log::{info, error};
 use libc::{getutxent, USER_PROCESS};
 
 fn main() {
@@ -16,7 +17,7 @@ fn do_main() {
         info!("The first argument is {}", args[1]);
     }
 
-    let mut days0 = String::from("7");
+    let mut days0 = DEF_DAYS.to_string();
     let mut mins0 = String::from("0");
     for (i, arg) in args.iter().enumerate() {
         match arg.as_str() {
@@ -40,7 +41,7 @@ fn do_main() {
         Ok(x) => x,
         Err(err) => {
             error!("do_main, days0.parse err = {}", err);
-            process::exit(1);
+            exit(1);
         },
     };
 
@@ -48,7 +49,7 @@ fn do_main() {
         Ok(x) => x,
         Err(err) => {
             error!("do_main, days0.parse err = {}", err);
-            process::exit(1);
+            exit(1);
         },
     };
 
@@ -56,6 +57,7 @@ fn do_main() {
         days: days1,
         mins: mins1,
     };
+    ctx.init();
 
     do_job(&ctx);
 
@@ -65,6 +67,13 @@ fn do_main() {
 struct Context {
     days: i32,
     mins: i32,
+}
+
+impl Context {
+    fn init(&self) {
+        info!("days = {}", self.days);
+        info!("mins = {}", self.mins);
+    }
 }
 
 const DEF_DAYS: i32 = 7;
@@ -101,5 +110,30 @@ fn do_job(ctx: &Context) {
         }
     }
 
-    info!("do_job, count = {}", count);
+
+    info!("do_job, recent logins count = {}", count);
+    if count != 0 {
+        info!("do_job, where is recent logins, no shutdown");
+        exit(0);
+    }
+
+    let args0 = if cfg!(target_os = "linux") {
+        ["-h", "now"]
+    } else if cfg!(target_os = "freebsd") {
+        ["-p", "now"]
+    } else {
+        ["-h", "now"]
+    };
+
+    info!("do_job, do shutdown");
+    _ = match process::Command::new("shutdown")
+        .args(args0).spawn() {
+        Ok(mut x) => x.wait(),
+        Err(err) => {
+            error!("do_job, command err = {}", err);
+            exit(1);
+        },
+    };
+
+    exit(0);
 }
