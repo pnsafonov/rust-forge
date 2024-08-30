@@ -88,7 +88,7 @@ inact checks last logins and do shutdown if no recent logins
 }
 
 fn print_version() {
-    print!("inact  1.0.0\n");
+    print!("inact  1.0.1\n");
 }
 
 struct Context {
