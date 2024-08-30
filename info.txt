@@ -3,6 +3,8 @@ git push -u github main
 
 git tag v1.0.1
 git push origin tag v1.0.1
+git tag -d v1.0.1
+git push --delete origin v1.0.1
 
 rustup target --help
 rustup target list
