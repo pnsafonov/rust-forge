@@ -88,7 +88,8 @@ inact checks last logins and do shutdown if no recent logins
 }
 
 fn print_version() {
-    print!("inact  1.0.1\n");
+    let sha1 = env!("VERGEN_GIT_SHA");
+    print!("inact  1.0.1  {}\n", sha1);
 }
 
 struct Context {

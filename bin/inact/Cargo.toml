@@ -2,8 +2,14 @@
 name = "inact"
 version = "0.1.0"
 edition = "2021"
+build = "build.rs"
 
 [dependencies]
 env_logger = "0.11.5"
 libc = "0.2.158"
 log = "0.4.22"
+
+[build-dependencies]
+#vergen = { version = "9.0.0", features = ["build", "cargo", "rustc", "si"] }
+#vergen-git2 = { version = "1.0.0", features = ["build", "cargo", "rustc", "si"] }
+vergen-git2 = { version = "1.0.0" }

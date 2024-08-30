@@ -27,3 +27,6 @@ cargo add env_logger
 
 # libc
 cargo add libc
+
+# git
+cargo add vergen
