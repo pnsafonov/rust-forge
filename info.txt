@@ -16,6 +16,9 @@ rustup target add x86_64-unknown-freebsd
 cargo build --package inact --target x86_64-unknown-linux-gnu
 cargo build --package inact --target x86_64-unknown-freebsd
 
+# github action
+https://github.com/marketplace/actions/rust-release-binary
+
 # log
 cargo add log
 cargo add env_logger
