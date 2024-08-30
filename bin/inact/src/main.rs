@@ -84,7 +84,8 @@ inact checks last logins and do shutdown if no recent logins
         --verbose         print information about last logins
 
     -h, --help            display this help and exit
-    -v, --version         output version information and exit`");
+    -v, --version         output version information and exit
+`");
 }
 
 fn print_version() {
