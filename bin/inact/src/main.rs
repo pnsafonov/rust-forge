@@ -125,11 +125,10 @@ fn do_job(ctx: &Context) {
 
         let mut i = 0;
         loop {
-            let utp = getutxent();
-            if utp.is_null() {
-                break;
-            }
-            let utp0 = *utp;
+            let utp0 = match getutxent().as_ref() {
+                Some(x) => x,
+                None => break,  // NULL is end of cycle
+            };
 
             if ctx.verbose {
                 print_utmpx(&utp0, i);
