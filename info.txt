@@ -24,6 +24,9 @@ https://github.com/rust-cross/cargo-zigbuild/blob/main/.github/workflows/Release
 https://github.com/marketplace/actions/build-and-upload-rust-binary-to-github-releases
 https://github.com/taiki-e/upload-rust-binary-action
 
+# github action runners
+https://docs.github.com/en/actions/using-github-hosted-runners/using-github-hosted-runners/about-github-hosted-runners
+
 # log
 cargo add log
 cargo add env_logger
