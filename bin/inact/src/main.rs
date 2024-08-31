@@ -2,7 +2,7 @@ use std::env;
 use std::process;
 use std::process::exit;
 use log::{info, error};
-use libc::{getutxent, USER_PROCESS};
+use libc::{getutxent, USER_PROCESS, printf};
 
 fn main() {
     do_main();
@@ -177,17 +177,28 @@ fn do_job(ctx: &Context) {
 }
 
 unsafe fn print_utmpx(utp0: &libc::utmpx, i: i32) {
-    let s0= std::ffi::CStr::from_ptr(utp0.ut_id.as_ptr());
-    let s1 = std::ffi::CStr::from_ptr(utp0.ut_user.as_ptr());
-    let s2 = std::ffi::CStr::from_ptr(utp0.ut_line.as_ptr());
-    info!("i = {}, ut_type = {}, tv_sec = {}, ut_id = {:?}, ut_pid = {}, ut_user = {:?}, ut_line = {:?}",
+    // let s0= std::ffi::CStr::from_ptr(utp0.ut_id.as_ptr());
+    // let s1 = std::ffi::CStr::from_ptr(utp0.ut_user.as_ptr());
+    // let s2 = std::ffi::CStr::from_ptr(utp0.ut_line.as_ptr());
+    // info!("i = {}, ut_type = {}, tv_sec = {}, ut_id = {:?}, ut_pid = {}, ut_user = {:?}, ut_line = {:?}",
+    //     i,
+    //     utp0.ut_type,
+    //     utp0.ut_tv.tv_sec,
+    //     s0,
+    //     utp0.ut_pid,
+    //     s1,
+    //     s2,
+    // );
+
+    let c_str = std::ffi::CString::new("i = %d, ut_type = %d, tv_sec = %d, ut_id = %s, ut_pid = %d, ut_user = %s, ut_line = %s\n").unwrap();
+    printf(c_str.as_ptr(),
         i,
-        utp0.ut_type,
+        utp0.ut_type as i32,
         utp0.ut_tv.tv_sec,
-        s0,
+        utp0.ut_id.as_ptr(),
         utp0.ut_pid,
-        s1,
-        s2,
+        utp0.ut_user.as_ptr(),
+        utp0.ut_line.as_ptr(),
     );
 }
 
